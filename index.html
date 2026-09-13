@@ -145,11 +145,10 @@
 </footer>
 
 <script>
-
 function analyzeCrop() {
 
-  const crop = document.getElementById("crop").value.toLowerCase();
-  const symptoms = document.getElementById("symptoms").value.toLowerCase();
+  const crop = document.getElementById("crop").value.toLowerCase().trim();
+  const symptoms = document.getElementById("symptoms").value.toLowerCase().trim();
   const result = document.getElementById("result");
 
   if (crop === "" || symptoms === "") {
@@ -161,39 +160,200 @@ function analyzeCrop() {
 
   let disease = "Possible crop health problem";
   let advice =
-    "Inspect the affected plants regularly, remove severely damaged leaves, maintain proper irrigation and consult a local agricultural expert for confirmation.";
+    "Monitor the crop carefully, remove severely damaged plant parts, maintain proper irrigation and consult a local agricultural expert for confirmation.";
+
+  let matched = false;
+
+  /* =========================
+     TOMATO
+  ========================= */
 
   if (crop.includes("tomato")) {
 
-    if (symptoms.includes("brown") || symptoms.includes("spot")) {
+    if (
+      (symptoms.includes("brown") || symptoms.includes("dark")) &&
+      (symptoms.includes("spot") || symptoms.includes("spots")) &&
+      (symptoms.includes("leaf") || symptoms.includes("leaves"))
+    ) {
       disease = "Possible Tomato Early Blight";
       advice =
-        "Remove infected leaves, avoid overhead watering, improve air circulation and use suitable disease-management practices recommended by local agricultural authorities.";
+        "Remove badly affected leaves, avoid watering the leaves from above, improve air circulation and follow locally recommended disease-management practices.";
+      matched = true;
     }
 
-    else if (symptoms.includes("yellow") || symptoms.includes("curl")) {
-      disease = "Possible Tomato Leaf Disease";
+    else if (
+      symptoms.includes("curl") ||
+      symptoms.includes("curled") ||
+      symptoms.includes("curling")
+    ) {
+      disease = "Possible Tomato Leaf Curl Problem";
       advice =
-        "Check for insect infestation and nutrient deficiencies. Remove severely affected leaves, maintain proper watering and monitor the plant regularly.";
+        "Check the underside of leaves for insects, remove severely affected leaves and monitor the plants regularly. Use locally recommended pest-management practices if insects are present.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("white") &&
+      (symptoms.includes("powder") || symptoms.includes("coating"))
+    ) {
+      disease = "Possible Tomato Powdery Mildew";
+      advice =
+        "Improve air circulation, avoid excessive humidity around the leaves and remove severely affected plant material.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("yellow") &&
+      (symptoms.includes("leaf") || symptoms.includes("leaves"))
+    ) {
+      disease = "Possible Tomato Yellowing / Nutrient Stress";
+      advice =
+        "Check watering, drainage and plant nutrition. Look for insects and inspect whether yellowing starts on older or newer leaves.";
+      matched = true;
     }
   }
+
+
+  /* =========================
+     RICE
+  ========================= */
 
   else if (crop.includes("rice")) {
 
-    if (symptoms.includes("brown") || symptoms.includes("spot")) {
+    if (
+      (symptoms.includes("brown") || symptoms.includes("dark")) &&
+      (symptoms.includes("spot") || symptoms.includes("spots"))
+    ) {
       disease = "Possible Rice Brown Spot";
       advice =
-        "Maintain balanced plant nutrition, use healthy seed, improve field management and follow locally recommended disease-control practices.";
+        "Use healthy seed, maintain balanced plant nutrition and good field management. Follow locally recommended disease-control practices.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("diamond") ||
+      symptoms.includes("gray") ||
+      symptoms.includes("grey") ||
+      symptoms.includes("lesion")
+    ) {
+      disease = "Possible Rice Blast";
+      advice =
+        "Inspect nearby plants for similar lesions, avoid excessive nitrogen application and follow locally recommended rice-blast management practices.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("yellow") &&
+      (symptoms.includes("leaf") || symptoms.includes("leaves"))
+    ) {
+      disease = "Possible Rice Nutrient Stress";
+      advice =
+        "Check water management and plant nutrition. Compare affected and healthy plants and seek local agricultural advice if yellowing spreads.";
+      matched = true;
     }
   }
 
+
+  /* =========================
+     POTATO
+  ========================= */
+
   else if (crop.includes("potato")) {
 
-    if (symptoms.includes("brown") || symptoms.includes("spot")) {
+    if (
+      (symptoms.includes("brown") || symptoms.includes("dark")) &&
+      (symptoms.includes("spot") || symptoms.includes("spots"))
+    ) {
       disease = "Possible Potato Blight";
       advice =
-        "Remove severely infected foliage, avoid prolonged leaf wetness and follow locally recommended fungicide and crop-management practices.";
+        "Remove severely affected foliage, reduce prolonged leaf wetness and follow locally recommended disease-management practices.";
+      matched = true;
     }
+
+    else if (
+      symptoms.includes("yellow") &&
+      (symptoms.includes("leaf") || symptoms.includes("leaves"))
+    ) {
+      disease = "Possible Potato Plant Stress";
+      advice =
+        "Check soil moisture, drainage and plant nutrition. Inspect the plants for insects or disease symptoms.";
+      matched = true;
+    }
+  }
+
+
+  /* =========================
+     CHILLI / PEPPER
+  ========================= */
+
+  else if (
+    crop.includes("chilli") ||
+    crop.includes("chili") ||
+    crop.includes("pepper")
+  ) {
+
+    if (
+      symptoms.includes("curl") ||
+      symptoms.includes("curled") ||
+      symptoms.includes("curling")
+    ) {
+      disease = "Possible Chilli Leaf Curl Problem";
+      advice =
+        "Inspect the leaves for small insects, remove severely affected leaves and monitor new growth. Follow locally recommended pest-management practices.";
+      matched = true;
+    }
+
+    else if (
+      (symptoms.includes("brown") || symptoms.includes("black")) &&
+      (symptoms.includes("spot") || symptoms.includes("spots"))
+    ) {
+      disease = "Possible Chilli Leaf Spot";
+      advice =
+        "Remove severely affected leaves, avoid overhead watering and maintain good air circulation around the plants.";
+      matched = true;
+    }
+  }
+
+
+  /* =========================
+     MAIZE / CORN
+  ========================= */
+
+  else if (
+    crop.includes("maize") ||
+    crop.includes("corn")
+  ) {
+
+    if (
+      (symptoms.includes("brown") || symptoms.includes("gray") || symptoms.includes("grey")) &&
+      (symptoms.includes("spot") || symptoms.includes("spots"))
+    ) {
+      disease = "Possible Maize Leaf Spot";
+      advice =
+        "Remove heavily affected plant material where practical, maintain good crop management and follow locally recommended disease-control practices.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("yellow") &&
+      (symptoms.includes("leaf") || symptoms.includes("leaves"))
+    ) {
+      disease = "Possible Maize Nutrient Stress";
+      advice =
+        "Check soil fertility, water availability and drainage. Compare affected plants with healthy plants.";
+      matched = true;
+    }
+  }
+
+
+  /* =========================
+     GENERAL RESULT
+  ========================= */
+
+  if (!matched) {
+    disease = "No specific condition matched";
+    advice =
+      "The symptoms do not closely match the conditions currently stored in Ujumbo. Try describing the colour, spots, curling, holes, wilting or other visible symptoms in more detail.";
   }
 
   result.style.display = "block";
