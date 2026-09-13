@@ -368,6 +368,19 @@ function analyzeCrop() {
 }
 
 </script>
+  <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => {
+        console.log("Ujumbo offline mode ready");
+      })
+      .catch(error => {
+        console.log("Offline mode error:", error);
+      });
+  });
+}
+  </script>
 
 </body>
 </html>
