@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Ujumbo - AI Crop Disease & Farmer Assistant</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #eef7ee;
+      color: #173b20;
+    }
+
+    header {
+      background: #216e39;
+      color: white;
+      padding: 25px 15px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 30px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 7px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border: 1px solid #b7cdb9;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #216e39;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #18572c;
+    }
+
+    #result {
+      display: none;
+      margin-top: 25px;
+      padding: 20px;
+      background: #f0f8f0;
+      border-left: 5px solid #216e39;
+      border-radius: 8px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #52705a;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌱 Ujumbo</h1>
+  <p>AI Crop Disease & Farmer Assistant</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+
+    <h2>🌾 Crop Health Assistant</h2>
+
+    <p>
+      Enter your crop name and describe the symptoms you observe.
+    </p>
+
+    <label for="crop">Crop Name</label>
+    <input
+      type="text"
+      id="crop"
+      placeholder="Example: Tomato"
+    >
+
+    <label for="symptoms">Symptoms</label>
+    <textarea
+      id="symptoms"
+      placeholder="Example: Yellow leaves, brown spots and curling..."
+    ></textarea>
+
+    <button onclick="analyzeCrop()">
+      🔍 Identify Possible Disease
+    </button>
+
+    <div id="result"></div>
+
+  </div>
+
+</div>
+
+<footer>
+  Ujumbo | AI-powered Crop Disease Detection & Farmer Assistant
+</footer>
+
+<script>
+
+function analyzeCrop() {
+
+  const crop = document.getElementById("crop").value.toLowerCase();
+  const symptoms = document.getElementById("symptoms").value.toLowerCase();
+  const result = document.getElementById("result");
+
+  if (crop === "" || symptoms === "") {
+    result.style.display = "block";
+    result.innerHTML =
+      "<strong>⚠️ Please enter both the crop name and symptoms.</strong>";
+    return;
+  }
+
+  let disease = "Possible crop health problem";
+  let advice =
+    "Inspect the affected plants regularly, remove severely damaged leaves, maintain proper irrigation and consult a local agricultural expert for confirmation.";
+
+  if (crop.includes("tomato")) {
+
+    if (symptoms.includes("brown") || symptoms.includes("spot")) {
+      disease = "Possible Tomato Early Blight";
+      advice =
+        "Remove infected leaves, avoid overhead watering, improve air circulation and use suitable disease-management practices recommended by local agricultural authorities.";
+    }
+
+    else if (symptoms.includes("yellow") || symptoms.includes("curl")) {
+      disease = "Possible Tomato Leaf Disease";
+      advice =
+        "Check for insect infestation and nutrient deficiencies. Remove severely affected leaves, maintain proper watering and monitor the plant regularly.";
+    }
+  }
+
+  else if (crop.includes("rice")) {
+
+    if (symptoms.includes("brown") || symptoms.includes("spot")) {
+      disease = "Possible Rice Brown Spot";
+      advice =
+        "Maintain balanced plant nutrition, use healthy seed, improve field management and follow locally recommended disease-control practices.";
+    }
+  }
+
+  else if (crop.includes("potato")) {
+
+    if (symptoms.includes("brown") || symptoms.includes("spot")) {
+      disease = "Possible Potato Blight";
+      advice =
+        "Remove severely infected foliage, avoid prolonged leaf wetness and follow locally recommended fungicide and crop-management practices.";
+    }
+  }
+
+  result.style.display = "block";
+
+  result.innerHTML = `
+    <h3>🌿 Result</h3>
+    <p><strong>Crop:</strong> ${crop}</p>
+    <p><strong>Possible condition:</strong> ${disease}</p>
+    <p><strong>Management advice:</strong> ${advice}</p>
+    <p><strong>⚠️ Note:</strong> This is an initial assessment, not a laboratory diagnosis.</p>
+  `;
+}
+
+</script>
+
+</body>
+</html>
