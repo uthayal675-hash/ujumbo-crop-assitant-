@@ -129,6 +129,29 @@
       id="symptoms"
       placeholder="Example: Yellow leaves, brown spots and curling..."
     ></textarea>
+    <div class="symptoms">
+  <p><strong>Choose a symptom:</strong></p>
+
+  <button type="button" onclick="selectSymptom('Brown spots on leaves')">
+    🟤 Brown spots
+  </button>
+
+  <button type="button" onclick="selectSymptom('Yellow leaves')">
+    🟡 Yellow leaves
+  </button>
+
+  <button type="button" onclick="selectSymptom('Curled leaves')">
+    🍃 Curled leaves
+  </button>
+
+  <button type="button" onclick="selectSymptom('White powder on leaves')">
+    ⚪ White powder
+  </button>
+
+  <button type="button" onclick="selectSymptom('Black spots on leaves')">
+    ⚫ Black spots
+  </button>
+    </div>
 
     <button onclick="analyzeCrop()">
       🔍 Identify Possible Disease
@@ -145,6 +168,9 @@
 </footer>
 
 <script>
+  function selectSymptom(symptom) {
+  document.getElementById("symptoms").value = symptom;
+  }
 function analyzeCrop() {
 
   const crop = document.getElementById("crop").value.toLowerCase().trim();
