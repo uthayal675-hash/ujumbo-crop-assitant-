@@ -204,6 +204,17 @@
 
   reader.readAsDataURL(file);
 });
+  function changeLanguage() {
+  const language = document.getElementById("language").value;
+
+  if (language === "ta") {
+    document.querySelector("h1").textContent = "🌱 Ujumbo";
+    document.querySelector("p").textContent = "விவசாயி பயிர் நோய் உதவியாளர்";
+  } else {
+    document.querySelector("h1").textContent = "🌱 Ujumbo";
+    document.querySelector("p").textContent = "AI Crop Disease & Farmer Assistant";
+  }
+  }
 function analyzeCrop() {
 
   const crop = document.getElementById("crop").value.toLowerCase().trim();
