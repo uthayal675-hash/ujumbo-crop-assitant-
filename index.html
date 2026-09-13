@@ -204,17 +204,73 @@
 
   reader.readAsDataURL(file);
 });
-  function changeLanguage() {
-  const language = document.getElementById("language").value;
+  const languages = {
+  en: {
+    subtitle: "AI Crop Disease & Farmer Assistant",
+    crop: "Select your crop",
+    symptom: "Choose a symptom:",
+    photo: "Or take a crop photo:",
+    analyze: "Analyze Crop"
+  },
 
-  if (language === "ta") {
-    document.querySelector("h1").textContent = "🌱 Ujumbo";
-    document.querySelector("p").textContent = "விவசாயி பயிர் நோய் உதவியாளர்";
-  } else {
-    document.querySelector("h1").textContent = "🌱 Ujumbo";
-    document.querySelector("p").textContent = "AI Crop Disease & Farmer Assistant";
+  ta: {
+    subtitle: "AI பயிர் நோய் மற்றும் விவசாயி உதவியாளர்",
+    crop: "உங்கள் பயிரைத் தேர்ந்தெடுக்கவும்",
+    symptom: "அறிகுறியைத் தேர்ந்தெடுக்கவும்:",
+    photo: "அல்லது பயிர் புகைப்படம் எடுக்கவும்:",
+    analyze: "பயிரை ஆய்வு செய்க"
+  },
+
+  hi: {
+    subtitle: "AI फसल रोग और किसान सहायक",
+    crop: "अपनी फसल चुनें",
+    symptom: "लक्षण चुनें:",
+    photo: "या फसल की फोटो लें:",
+    analyze: "फसल का विश्लेषण करें"
+  },
+
+  te: {
+    subtitle: "AI పంట వ్యాధి మరియు రైతు సహాయకుడు",
+    crop: "మీ పంటను ఎంచుకోండి",
+    symptom: "లక్షణాన్ని ఎంచుకోండి:",
+    photo: "లేదా పంట ఫోటో తీయండి:",
+    analyze: "పంటను విశ్లేషించండి"
+  },
+
+  kn: {
+    subtitle: "AI ಬೆಳೆ ರೋಗ ಮತ್ತು ರೈತ ಸಹಾಯಕ",
+    crop: "ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    symptom: "ಲಕ್ಷಣವನ್ನು ಆಯ್ಕೆಮಾಡಿ:",
+    photo: "ಅಥವಾ ಬೆಳೆಯ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ:",
+    analyze: "ಬೆಳೆಯನ್ನು ವಿಶ್ಲೇಷಿಸಿ"
+  },
+
+  ml: {
+    subtitle: "AI വിള രോഗവും കർഷക സഹായിയും",
+    crop: "നിങ്ങളുടെ വിള തിരഞ്ഞെടുക്കുക",
+    symptom: "ലക്ഷണം തിരഞ്ഞെടുക്കുക:",
+    photo: "അല്ലെങ്കിൽ വിളയുടെ ഫോട്ടോ എടുക്കുക:",
+    analyze: "വിള വിശകലനം ചെയ്യുക"
   }
+};
+
+function changeLanguage() {
+  const language = document.getElementById("language").value;
+  const text = languages[language] || languages.en;
+
+  document.querySelector("h1").textContent = "🌱 Ujumbo";
+  document.querySelector("h1").nextElementSibling.textContent = text.subtitle;
+
+  document.querySelector("#crop").options[0].textContent = text.crop;
+
+  const analyzeButton = document.querySelector(
+    'button[onclick="analyzeCrop()"]'
+  );
+
+  if (analyzeButton) {
+    analyzeButton.textContent = text.analyze;
   }
+}
 function analyzeCrop() {
 
   const crop = document.getElementById("crop").value.toLowerCase().trim();
