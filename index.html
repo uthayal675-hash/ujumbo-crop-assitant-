@@ -132,6 +132,16 @@
       placeholder="Describe symptoms" ></textarea>
     <div class="symptoms">
   <p><strong>Choose a symptom:</strong></p>
+      <p><strong>Or take a crop photo:</strong></p>
+
+<input
+  type="file"
+  id="cropPhoto"
+  accept="image/*"
+  capture="environment"
+>
+
+<p id="photoMessage"></p>
 
   <button type="button" onclick="selectSymptom('Brown spots on leaves')">
     🟤 Brown spots
