@@ -275,6 +275,31 @@ function changeLanguage() {
     analyzeButton.textContent = text.analyze;
   }
 }
+  function translateResult(resultText) {
+  const language = document.getElementById("language").value;
+
+  const translations = {
+    ta: {
+      "Possible Tomato Early Blight": "தக்காளி ஆரம்ப இலை கருகல் நோய் இருக்கலாம்",
+      "Possible Tomato Leaf Curl Problem": "தக்காளி இலை சுருட்டல் பிரச்சனை இருக்கலாம்",
+      "Possible Rice Brown Spot": "நெல் பழுப்பு புள்ளி நோய் இருக்கலாம்",
+      "Possible Potato Blight": "உருளைக்கிழங்கு கருகல் நோய் இருக்கலாம்",
+      "Possible Chilli Leaf Curl Problem": "மிளகாய் இலை சுருட்டல் பிரச்சனை இருக்கலாம்",
+      "Possible Maize Leaf Spot": "மக்காச்சோளம் இலை புள்ளி நோய் இருக்கலாம்"
+    },
+
+    hi: {
+      "Possible Tomato Early Blight": "टमाटर में अर्ली ब्लाइट हो सकता है",
+      "Possible Tomato Leaf Curl Problem": "टमाटर में पत्ती मुड़ने की समस्या हो सकती है",
+      "Possible Rice Brown Spot": "धान में ब्राउन स्पॉट रोग हो सकता है",
+      "Possible Potato Blight": "आलू में झुलसा रोग हो सकता है",
+      "Possible Chilli Leaf Curl Problem": "मिर्च में पत्ती मुड़ने की समस्या हो सकती है",
+      "Possible Maize Leaf Spot": "मक्का में पत्ती धब्बा रोग हो सकता है"
+    }
+  };
+
+  return translations[language]?.[resultText] || resultText;
+  }
 function analyzeCrop() {
 
   const crop = document.getElementById("crop").value.toLowerCase().trim();
@@ -495,6 +520,7 @@ function analyzeCrop() {
     <p><strong>Management advice:</strong> ${advice}</p>
     <p><strong>⚠️ Note:</strong> This is an initial assessment, not a laboratory diagnosis.</p>
   `;
+  translateFinalResult();
 }
 
 </script>
