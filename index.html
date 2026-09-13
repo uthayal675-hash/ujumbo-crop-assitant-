@@ -186,11 +186,19 @@
   document.getElementById("cropPhoto").addEventListener("change", function () {
   const file = this.files[0];
   const preview = document.getElementById("photoPreview");
+  const message = document.getElementById("photoMessage");
 
-  if (file) {
-    preview.src = URL.createObjectURL(file);
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    preview.src = event.target.result;
     preview.style.display = "block";
-  }
+    message.textContent = "Photo selected successfully 🌱";
+  };
+
+  reader.readAsDataURL(file);
 });
 function analyzeCrop() {
 
