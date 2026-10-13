@@ -92,7 +92,11 @@
   
 select{padding:10px;border-radius:8px;border:1px solid #b7cdb9;font-size:16px;max-width:100%}#crop{width:100%}#language{margin-top:10px}#photoPreview{display:none;max-width:100%;margin-top:10px;border-radius:10px}.small{font-size:13px;color:#52705a}.actions{display:flex;gap:10px}.actions button{font-size:14px}button:focus-visible,select:focus-visible{outline:3px solid #f3b64c}</style></head><body>
 <header><h1>🌱 Ujumbo</h1><select id="language" aria-label="Language"><option value="en">🇬🇧 English</option><option value="ta">தமிழ்</option><option value="hi">हिन्दी</option><option value="te">తెలుగు</option><option value="kn">ಕನ್ನಡ</option><option value="ml">മലയാളം</option></select><p data-i18n="subtitle"></p></header>
-<main class="container"><section class="card"><h2 data-i18n="heading"></h2><p data-i18n="intro"></p><label for="crop" data-i18n="cropLabel"></label><select id="crop"></select><label for="symptoms" data-i18n="symptomsLabel"></label><textarea id="symptoms" data-placeholder="placeholder"></textarea><p><strong data-i18n="choose"></strong></p><p><strong data-i18n="photo"></strong></p><input type="file" id="cropPhoto" accept="image/*" capture="environment"><p id="photoMessage" class="small"></p><img id="photoPreview" alt="Crop photo preview"><div id="symptomButtons"></div><button id="analyze" data-i18n="analyze"></button><div id="result" aria-live="polite"></div><div class="actions"><button id="speak" data-i18n="speak"></button><button id="save" data-i18n="save"></button></div><p class="small" data-i18n="disclaimer"></p></section></main><footer data-i18n="footer"></footer>
+<main class="container"><section class="card"><h2 data-i18n="heading"></h2><p data-i18n="intro"></p><label for="crop" data-i18n="cropLabel"></label><select id="crop"></select><label for="symptoms" data-i18n="symptomsLabel"></label><textarea id="symptoms" data-placeholder="placeholder"></textarea><p><strong data-i18n="choose"></strong></p><p><strong data-i18n="photo"></strong></p><input type="file" id="cropPhoto" accept="image/*" capture="environment"><p id="photoMessage" class="small"></p><img id="photoPreview" alt="Crop photo preview"><div id="symptomButtons"></div><button id="analyze" data-i18n="analyze"></button><div id="result" aria-live="polite"></div>
+    <button id="viewReports" type="button">
+  📋 View Saved Reports
+</button>
+<div id="savedReports"></div><div class="actions"><button id="speak" data-i18n="speak"></button><button id="save" data-i18n="save"></button></div><p class="small" data-i18n="disclaimer"></p></section></main><footer data-i18n="footer"></footer>
 <script>
 const translations = {
 en:{subtitle:'AI Crop Disease & Farmer Assistant',heading:'🌾 Crop Health Assistant',intro:'Select a crop and describe the symptoms you observe.',cropLabel:'Crop Name',symptomsLabel:'Symptoms',placeholder:'Describe symptoms',choose:'Choose a symptom:',photo:'Or take a crop photo:',analyze:'🔍 Identify Possible Disease',speak:'🔊 Read Result Aloud',save:'💾 Save Report',disclaimer:'This is a symptom-based screening tool, not a confirmed diagnosis. Uploaded photos are not analyzed by AI yet.',footer:'Ujumbo | Crop Health & Farmer Assistant',select:'Select your crop',photoAdded:'Photo added. Please select crop and symptoms. Photo analysis is not available yet.',required:'Please select a crop and enter symptoms.',result:'Result',crop:'Crop',condition:'Possible condition',advice:'Management advice',note:'Note',noteText:'This is an initial symptom-based assessment, not a laboratory diagnosis.',noMatch:'No specific condition matched',noMatchAdvice:'Symptoms do not closely match the current rule library. Describe the visible changes and consult a local agricultural expert.',saved:'Report saved on this device.',noResult:'Analyze a crop first.',brown:'🟤 Brown spots',yellow:'🟡 Yellow leaves',curl:'🍃 Curled leaves',white:'⚪ White powder',black:'⚫ Black spots',Tomato:'🍅 Tomato',Rice:'🌾 Rice',Potato:'🥔 Potato',Chilli:'🌶️ Chilli',Maize:'🌽 Maize'},
@@ -118,7 +122,51 @@ function setLanguage(){const lang=language();document.documentElement.lang=lang;
 function pickCase(crop,symptoms){const s=symptoms.toLowerCase();if(crop==='Tomato'&&/brown|dark/.test(s)&&/spot/.test(s))return 'early';if(/curl|curled|curling/.test(s))return 'curl';if(/white/.test(s)&&/powder|coating/.test(s))return 'powder';if(/brown|black|dark/.test(s)&&/spot/.test(s))return 'spots';if(/yellow/.test(s))return 'yellow';return null}
 function renderResult(){const box=document.getElementById('result');box.style.display='block';box.replaceChildren();const add=(tag,txt)=>{const el=document.createElement(tag);el.textContent=txt;box.append(el)};if(currentCase.error){add('strong',tr('required'));return}const c=cases[currentCase.key];add('h3','🌿 '+tr('result'));add('p',tr('crop')+': '+tr(currentCase.crop));add('p',tr('condition')+': '+(c?c.name[language()]:tr('noMatch')));add('p',tr('advice')+': '+(c?c.advice[language()]:tr('noMatchAdvice')));add('p','⚠️ '+tr('note')+': '+tr('noteText'))}
 function analyze(){const crop=document.getElementById('crop').value;const symptoms=document.getElementById('symptoms').value.trim();currentCase=(!crop||!symptoms)?{error:true}:{crop,key:pickCase(crop,symptoms)};renderResult()}
-document.getElementById('language').addEventListener('change',setLanguage);document.getElementById('analyze').addEventListener('click',analyze);document.getElementById('symptoms').addEventListener('input',()=>{delete document.getElementById('symptoms').dataset.symptom});document.getElementById('cropPhoto').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const img=document.getElementById('photoPreview');if(img.dataset.url)URL.revokeObjectURL(img.dataset.url);const url=URL.createObjectURL(f);img.src=url;img.dataset.url=url;img.style.display='block';document.getElementById('photoMessage').textContent=tr('photoAdded')});document.getElementById('speak').addEventListener('click',()=>{if(!currentCase||currentCase.error){alert(tr('noResult'));return}if(!('speechSynthesis' in window)){alert('Speech synthesis not supported on this device');return}speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(document.getElementById('result').innerText);utterance.lang=({en:'en-IN',ta:'ta-IN',hi:'hi-IN',te:'te-IN',kn:'kn-IN',ml:'ml-IN'})[language()];speechSynthesis.speak(utterance)});document.getElementById('save').addEventListener('click',()=>{if(!currentCase||currentCase.error){alert(tr('noResult'));return}try{const reports=JSON.parse(localStorage.getItem('ujumbo-reports')||'[]');reports.push({date:new Date().toISOString(),crop:currentCase.crop,symptoms:document.getElementById('symptoms').value,caseKey:currentCase.key});localStorage.setItem('ujumbo-reports',JSON.stringify(reports));alert(tr('saved'))}catch(e){alert('Storage unavailable')}});document.getElementById('language').value=localStorage.getItem('ujumbo-language')||'en';setLanguage();
+document.getElementById('language').addEventListener('change',setLanguage);document.getElementById('analyze').addEventListener('click',analyze);document.getElementById('symptoms').addEventListener('input',()=>{delete document.getElementById('symptoms').dataset.symptom});document.getElementById('cropPhoto').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const img=document.getElementById('photoPreview');if(img.dataset.url)URL.revokeObjectURL(img.dataset.url);const url=URL.createObjectURL(f);img.src=url;img.dataset.url=url;img.style.display='block';document.getElementById('photoMessage').textContent=tr('photoAdded')});document.getElementById('speak').addEventListener('click',()=>{if(!currentCase||currentCase.error){alert(tr('noResult'));return}if(!('speechSynthesis' in window)){alert('Speech synthesis not supported on this device');return}speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(document.getElementById('result').innerText);utterance.lang=({en:'en-IN',ta:'ta-IN',hi:'hi-IN',te:'te-IN',kn:'kn-IN',ml:'ml-IN'})[language()];speechSynthesis.speak(utterance)});document.getElementById('save').addEventListener('click',()=>{if(!currentCase||currentCase.error){alert(tr('noResult'));return}try{const reports=JSON.parse(localStorage.getItem('ujumbo-reports')||'[]');reports.push({date:new Date().toISOString(),crop:currentCase.crop,symptoms:document.getElementById('symptoms').value,caseKey:currentCase.key});localStorage.setItem('ujumbo-reports',JSON.stringify(reports));alert(tr('saved'))}catch(e){alert('Storage unavailable')}});
+    document.getElementById('viewReports').addEventListener('click', () => {
+  const box = document.getElementById('savedReports');
+  box.replaceChildren();
+
+  let reports = [];
+  try {
+    reports = JSON.parse(
+      localStorage.getItem('ujumbo-reports') || '[]'
+    );
+  } catch (error) {
+    box.textContent = 'Could not read saved reports.';
+    return;
+  }
+
+  if (reports.length === 0) {
+    box.textContent = 'No saved reports found in this browser.';
+    return;
+  }
+
+  reports.slice().reverse().forEach(report => {
+    const item = document.createElement('div');
+    item.style.cssText =
+      'background:#f0f8f0;padding:12px;margin-top:10px;' +
+      'border-radius:8px;overflow-wrap:anywhere';
+
+    const date = document.createElement('p');
+    date.textContent = 'Date: ' +
+      new Date(report.date).toLocaleString();
+
+    const crop = document.createElement('p');
+    crop.textContent = 'Crop: ' + report.crop;
+
+    const symptoms = document.createElement('p');
+    symptoms.textContent = 'Symptoms: ' + report.symptoms;
+
+    const condition = document.createElement('p');
+    condition.textContent = 'Possible condition: ' +
+      (report.caseKey || 'No match');
+
+    item.append(date, crop, symptoms, condition);
+    box.appendChild(item);
+  });
+});document.getElementById('language').value=localStorage.getItem('ujumbo-language')
+    ||'en';setLanguage();
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(console.warn));
 
 <script>
