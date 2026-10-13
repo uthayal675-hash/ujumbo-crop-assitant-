@@ -1,4 +1,12 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ujumbo - Crop Health Assistant</title><style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Ujumbo - AI Crop Disease & Farmer Assistant</title>
+
+  <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -89,33 +97,483 @@
       color: #52705a;
       font-size: 14px;
     }
-  
-select{padding:10px;border-radius:8px;border:1px solid #b7cdb9;font-size:16px;max-width:100%}#crop{width:100%}#language{margin-top:10px}#photoPreview{display:none;max-width:100%;margin-top:10px;border-radius:10px}.small{font-size:13px;color:#52705a}.actions{display:flex;gap:10px}.actions button{font-size:14px}button:focus-visible,select:focus-visible{outline:3px solid #f3b64c}</style></head><body>
-<header><h1>🌱 Ujumbo</h1><select id="language" aria-label="Language"><option value="en">🇬🇧 English</option><option value="ta">தமிழ்</option><option value="hi">हिन्दी</option><option value="te">తెలుగు</option><option value="kn">ಕನ್ನಡ</option><option value="ml">മലയാളം</option></select><p data-i18n="subtitle"></p></header>
-<main class="container"><section class="card"><h2 data-i18n="heading"></h2><p data-i18n="intro"></p><label for="crop" data-i18n="cropLabel"></label><select id="crop"></select><label for="symptoms" data-i18n="symptomsLabel"></label><textarea id="symptoms" data-placeholder="placeholder"></textarea><p><strong data-i18n="choose"></strong></p><p><strong data-i18n="photo"></strong></p><input type="file" id="cropPhoto" accept="image/*" capture="environment"><p id="photoMessage" class="small"></p><img id="photoPreview" alt="Crop photo preview"><div id="symptomButtons"></div><button id="analyze" data-i18n="analyze"></button><div id="result" aria-live="polite"></div><div class="actions"><button id="speak" data-i18n="speak"></button><button id="save" data-i18n="save"></button></div><p class="small" data-i18n="disclaimer"></p></section></main><footer data-i18n="footer"></footer>
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌱 Ujumbo</h1>
+  <select id="language" onchange="changeLanguage()">
+  <option value="en">🇬🇧 English</option>
+  <option value="ta">🇮🇳 தமிழ்</option>
+    <option value="hi">🇮🇳 हिन्दी</option>
+<option value="te">🇮🇳 తెలుగు</option>
+<option value="kn">🇮🇳 ಕನ್ನಡ</option>
+<option value="ml">🇮🇳 മലയാളം</option>
+  </select>
+  <p>AI Crop Disease & Farmer Assistant</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+
+    <h2>🌾 Crop Health Assistant</h2>
+
+    <p>
+      Enter your crop name and describe the symptoms you observe.
+    </p>
+
+    <label for="crop">Crop Name</label>
+<select id="crop">
+  <option value="">Select your crop</option>
+  <option value="Tomato">🍅 Tomato</option>
+  <option value="Rice">🌾 Rice</option>
+  <option value="Potato">🥔 Potato</option>
+  <option value="Chilli">🌶️ Chilli</option>
+  <option value="Maize">🌽 Maize</option>
+</select>
+
+    <label for="symptoms">Symptoms</label>
+    <textarea id="symptoms"
+      placeholder="Describe symptoms" ></textarea>
+    <div class="symptoms">
+  <p><strong>Choose a symptom:</strong></p>
+      <p><strong>Or take a crop photo:</strong></p>
+
+<input
+  type="file"
+  id="cropPhoto"
+  accept="image/*"
+  capture="environment"
+>
+
+<p id="photoMessage"></p>
+      <img id="photoPreview" style="display:none; max-width:100%; margin-top:10px; border-radius:10px;">
+
+  <button type="button" onclick="selectSymptom('Brown spots on leaves')">
+    🟤 Brown spots
+  </button>
+
+  <button type="button" onclick="selectSymptom('Yellow leaves')">
+    🟡 Yellow leaves
+  </button>
+
+  <button type="button" onclick="selectSymptom('Curled leaves')">
+    🍃 Curled leaves
+  </button>
+
+  <button type="button" onclick="selectSymptom('White powder on leaves')">
+    ⚪ White powder
+  </button>
+
+  <button type="button" onclick="selectSymptom('Black spots on leaves')">
+    ⚫ Black spots
+  </button>
+    </div>
+
+    <button onclick="analyzeCrop()">
+      🔍 Identify Possible Disease
+    </button>
+
+    <div id="result"></div>
+
+  </div>
+
+</div>
+
+<footer>
+  Ujumbo | AI-powered Crop Disease Detection & Farmer Assistant
+</footer>
+
 <script>
-const translations = {
-en:{subtitle:'AI Crop Disease & Farmer Assistant',heading:'🌾 Crop Health Assistant',intro:'Select a crop and describe the symptoms you observe.',cropLabel:'Crop Name',symptomsLabel:'Symptoms',placeholder:'Describe symptoms',choose:'Choose a symptom:',photo:'Or take a crop photo:',analyze:'🔍 Identify Possible Disease',speak:'🔊 Read Result Aloud',save:'💾 Save Report',disclaimer:'This is a symptom-based screening tool, not a confirmed diagnosis. Uploaded photos are not analyzed by AI yet.',footer:'Ujumbo | Crop Health & Farmer Assistant',select:'Select your crop',photoAdded:'Photo added. Please select crop and symptoms. Photo analysis is not available yet.',required:'Please select a crop and enter symptoms.',result:'Result',crop:'Crop',condition:'Possible condition',advice:'Management advice',note:'Note',noteText:'This is an initial symptom-based assessment, not a laboratory diagnosis.',noMatch:'No specific condition matched',noMatchAdvice:'Symptoms do not closely match the current rule library. Describe the visible changes and consult a local agricultural expert.',saved:'Report saved on this device.',noResult:'Analyze a crop first.',brown:'🟤 Brown spots',yellow:'🟡 Yellow leaves',curl:'🍃 Curled leaves',white:'⚪ White powder',black:'⚫ Black spots',Tomato:'🍅 Tomato',Rice:'🌾 Rice',Potato:'🥔 Potato',Chilli:'🌶️ Chilli',Maize:'🌽 Maize'},
-ta:{subtitle:'AI பயிர் நோய் மற்றும் விவசாயி உதவியாளர்',heading:'🌾 பயிர் ஆரோக்கிய உதவியாளர்',intro:'பயிரைத் தேர்ந்தெடுத்து காணப்படும் அறிகுறிகளை விவரிக்கவும்.',cropLabel:'பயிரின் பெயர்',symptomsLabel:'அறிகுறிகள்',placeholder:'அறிகுறிகளை விவரிக்கவும்',choose:'அறிகுறியைத் தேர்ந்தெடுக்கவும்:',photo:'அல்லது பயிரின் புகைப்படத்தை எடுக்கவும்:',analyze:'🔍 சாத்தியமான நோயைக் கண்டறியவும்',speak:'🔊 முடிவைக் கேட்கவும்',save:'💾 அறிக்கையைச் சேமிக்கவும்',disclaimer:'இது அறிகுறிகளின் அடிப்படையிலான ஆரம்ப மதிப்பீடு. புகைப்படத்தை AI இன்னும் ஆய்வு செய்யவில்லை.',footer:'Ujumbo | பயிர் ஆரோக்கியம் மற்றும் விவசாயி உதவியாளர்',select:'பயிரைத் தேர்ந்தெடுக்கவும்',photoAdded:'புகைப்படம் சேர்க்கப்பட்டது. பயிரையும் அறிகுறிகளையும் தேர்ந்தெடுக்கவும். புகைப்பட ஆய்வு இன்னும் இல்லை.',required:'பயிரையும் அறிகுறிகளையும் உள்ளிடவும்.',result:'முடிவு',crop:'பயிர்',condition:'சாத்தியமான பாதிப்பு',advice:'பராமரிப்பு ஆலோசனை',note:'குறிப்பு',noteText:'இது அறிகுறிகளின் அடிப்படையிலான ஆரம்ப மதிப்பீடு; உறுதிப்படுத்தப்பட்ட ஆய்வக முடிவு அல்ல.',noMatch:'குறிப்பிட்ட பாதிப்பு பொருந்தவில்லை',noMatchAdvice:'தற்போதைய தகவல்களுடன் அறிகுறிகள் பொருந்தவில்லை. மேலும் விவரித்து வேளாண் நிபுணரை அணுகவும்.',saved:'அறிக்கை இந்தச் சாதனத்தில் சேமிக்கப்பட்டது.',noResult:'முதலில் பயிரை ஆய்வு செய்யவும்.',brown:'🟤 பழுப்பு நிறப் புள்ளிகள்',yellow:'🟡 மஞ்சள் இலைகள்',curl:'🍃 சுருண்ட இலைகள்',white:'⚪ வெள்ளைத் தூள்',black:'⚫ கருப்புப் புள்ளிகள்',Tomato:'🍅 தக்காளி',Rice:'🌾 நெல்',Potato:'🥔 உருளைக்கிழங்கு',Chilli:'🌶️ மிளகாய்',Maize:'🌽 மக்காச்சோளம்'},
-hi:{subtitle:'AI फसल रोग और किसान सहायक',heading:'🌾 फसल स्वास्थ्य सहायक',intro:'फसल चुनें और दिखाई देने वाले लक्षण बताएँ।',cropLabel:'फसल का नाम',symptomsLabel:'लक्षण',placeholder:'लक्षण बताएँ',choose:'लक्षण चुनें:',photo:'या फसल की फोटो लें:',analyze:'🔍 संभावित रोग पहचानें',speak:'🔊 परिणाम सुनें',save:'💾 रिपोर्ट सहेजें',disclaimer:'यह लक्षणों पर आधारित प्रारंभिक आकलन है। फोटो का AI विश्लेषण अभी उपलब्ध नहीं है।',footer:'Ujumbo | फसल स्वास्थ्य और किसान सहायक',select:'अपनी फसल चुनें',photoAdded:'फोटो जोड़ी गई। फसल और लक्षण चुनें। फोटो विश्लेषण अभी उपलब्ध नहीं है।',required:'फसल और लक्षण दर्ज करें।',result:'परिणाम',crop:'फसल',condition:'संभावित समस्या',advice:'प्रबंधन सलाह',note:'ध्यान दें',noteText:'यह प्रारंभिक आकलन है, प्रयोगशाला में पुष्टि किया गया निदान नहीं।',noMatch:'कोई विशिष्ट समस्या मेल नहीं खाती',noMatchAdvice:'लक्षण मौजूदा जानकारी से मेल नहीं खाते। अधिक विवरण दें और कृषि विशेषज्ञ से संपर्क करें।',saved:'रिपोर्ट इस डिवाइस पर सहेजी गई।',noResult:'पहले फसल का विश्लेषण करें।',brown:'🟤 भूरे धब्बे',yellow:'🟡 पीली पत्तियाँ',curl:'🍃 मुड़ी हुई पत्तियाँ',white:'⚪ सफेद चूर्ण',black:'⚫ काले धब्बे',Tomato:'🍅 टमाटर',Rice:'🌾 धान',Potato:'🥔 आलू',Chilli:'🌶️ मिर्च',Maize:'🌽 मक्का'},
-te:{subtitle:'AI పంట వ్యాధి మరియు రైతు సహాయకుడు',heading:'🌾 పంట ఆరోగ్య సహాయకుడు',intro:'పంటను ఎంచుకుని కనిపించే లక్షణాలను వివరించండి.',cropLabel:'పంట పేరు',symptomsLabel:'లక్షణాలు',placeholder:'లక్షణాలను వివరించండి',choose:'లక్షణాన్ని ఎంచుకోండి:',photo:'లేదా పంట ఫోటో తీయండి:',analyze:'🔍 సాధ్యమైన వ్యాధిని గుర్తించండి',speak:'🔊 ఫలితాన్ని వినండి',save:'💾 నివేదికను సేవ్ చేయండి',disclaimer:'ఇది లక్షణాల ఆధారిత ప్రాథమిక అంచనా. ఫోటో AI విశ్లేషణ ఇంకా అందుబాటులో లేదు.',footer:'Ujumbo | పంట ఆరోగ్యం మరియు రైతు సహాయకుడు',select:'మీ పంటను ఎంచుకోండి',photoAdded:'ఫోటో జోడించబడింది. పంట మరియు లక్షణాలను ఎంచుకోండి. ఫోటో విశ్లేషణ ఇంకా లేదు.',required:'పంట మరియు లక్షణాలను నమోదు చేయండి.',result:'ఫలితం',crop:'పంట',condition:'సాధ్యమైన సమస్య',advice:'నిర్వహణ సూచనలు',note:'గమనిక',noteText:'ఇది ప్రాథమిక అంచనా మాత్రమే, ప్రయోగశాల నిర్ధారణ కాదు.',noMatch:'నిర్దిష్ట సమస్య సరిపోలలేదు',noMatchAdvice:'లక్షణాలు ప్రస్తుత సమాచారంతో సరిపోలలేదు. మరింత వివరించి వ్యవసాయ నిపుణుడిని సంప్రదించండి.',saved:'నివేదిక ఈ పరికరంలో సేవ్ చేయబడింది.',noResult:'ముందుగా పంటను విశ్లేషించండి.',brown:'🟤 గోధుమ మచ్చలు',yellow:'🟡 పసుపు ఆకులు',curl:'🍃 ముడుచుకున్న ఆకులు',white:'⚪ తెల్లటి పొడి',black:'⚫ నల్ల మచ్చలు',Tomato:'🍅 టమాటా',Rice:'🌾 వరి',Potato:'🥔 బంగాళాదుంప',Chilli:'🌶️ మిరప',Maize:'🌽 మొక్కజొన్న'},
-kn:{subtitle:'AI ಬೆಳೆ ರೋಗ ಮತ್ತು ರೈತ ಸಹಾಯಕ',heading:'🌾 ಬೆಳೆ ಆರೋಗ್ಯ ಸಹಾಯಕ',intro:'ಬೆಳೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ ಕಾಣುವ ಲಕ್ಷಣಗಳನ್ನು ವಿವರಿಸಿ.',cropLabel:'ಬೆಳೆಯ ಹೆಸರು',symptomsLabel:'ಲಕ್ಷಣಗಳು',placeholder:'ಲಕ್ಷಣಗಳನ್ನು ವಿವರಿಸಿ',choose:'ಲಕ್ಷಣವನ್ನು ಆಯ್ಕೆಮಾಡಿ:',photo:'ಅಥವಾ ಬೆಳೆಯ ಫೋಟೋ ತೆಗೆಯಿರಿ:',analyze:'🔍 ಸಂಭವನೀಯ ರೋಗ ಗುರುತಿಸಿ',speak:'🔊 ಫಲಿತಾಂಶ ಆಲಿಸಿ',save:'💾 ವರದಿ ಉಳಿಸಿ',disclaimer:'ಇದು ಲಕ್ಷಣ ಆಧಾರಿತ ಪ್ರಾಥಮಿಕ ಮೌಲ್ಯಮಾಪನ. ಫೋಟೋ AI ವಿಶ್ಲೇಷಣೆ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.',footer:'Ujumbo | ಬೆಳೆ ಆರೋಗ್ಯ ಮತ್ತು ರೈತ ಸಹಾಯಕ',select:'ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ',photoAdded:'ಫೋಟೋ ಸೇರಿಸಲಾಗಿದೆ. ಬೆಳೆ ಮತ್ತು ಲಕ್ಷಣಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ. ಫೋಟೋ ವಿಶ್ಲೇಷಣೆ ಇನ್ನೂ ಇಲ್ಲ.',required:'ಬೆಳೆ ಮತ್ತು ಲಕ್ಷಣಗಳನ್ನು ನಮೂದಿಸಿ.',result:'ಫಲಿತಾಂಶ',crop:'ಬೆಳೆ',condition:'ಸಂಭವನೀಯ ಸಮಸ್ಯೆ',advice:'ನಿರ್ವಹಣಾ ಸಲಹೆ',note:'ಗಮನಿಸಿ',noteText:'ಇದು ಪ್ರಾಥಮಿಕ ಮೌಲ್ಯಮಾಪನ, ಪ್ರಯೋಗಾಲಯ ದೃಢೀಕರಣವಲ್ಲ.',noMatch:'ನಿರ್ದಿಷ್ಟ ಸಮಸ್ಯೆ ಹೊಂದಿಕೆಯಾಗಿಲ್ಲ',noMatchAdvice:'ಲಕ್ಷಣಗಳು ಪ್ರಸ್ತುತ ಮಾಹಿತಿಗೆ ಹೊಂದಿಕೆಯಾಗಿಲ್ಲ. ಹೆಚ್ಚಿನ ವಿವರ ನೀಡಿ ಕೃಷಿ ತಜ್ಞರನ್ನು ಸಂಪರ್ಕಿಸಿ.',saved:'ವರದಿ ಈ ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ.',noResult:'ಮೊದಲು ಬೆಳೆಯನ್ನು ವಿಶ್ಲೇಷಿಸಿ.',brown:'🟤 ಕಂದು ಕಲೆಗಳು',yellow:'🟡 ಹಳದಿ ಎಲೆಗಳು',curl:'🍃 ಸುರುಳಿಯಾದ ಎಲೆಗಳು',white:'⚪ ಬಿಳಿ ಪುಡಿ',black:'⚫ ಕಪ್ಪು ಕಲೆಗಳು',Tomato:'🍅 ಟೊಮೆಟೊ',Rice:'🌾 ಭತ್ತ',Potato:'🥔 ಆಲೂಗಡ್ಡೆ',Chilli:'🌶️ ಮೆಣಸಿನಕಾಯಿ',Maize:'🌽 ಮೆಕ್ಕೆಜೋಳ'},
-ml:{subtitle:'AI വിള രോഗവും കർഷക സഹായിയും',heading:'🌾 വിള ആരോഗ്യ സഹായി',intro:'വിള തിരഞ്ഞെടുത്ത് കാണുന്ന ലക്ഷണങ്ങൾ വിവരിക്കുക.',cropLabel:'വിളയുടെ പേര്',symptomsLabel:'ലക്ഷണങ്ങൾ',placeholder:'ലക്ഷണങ്ങൾ വിവരിക്കുക',choose:'ലക്ഷണം തിരഞ്ഞെടുക്കുക:',photo:'അല്ലെങ്കിൽ വിളയുടെ ഫോട്ടോ എടുക്കുക:',analyze:'🔍 സാധ്യതയുള്ള രോഗം കണ്ടെത്തുക',speak:'🔊 ഫലം കേൾക്കുക',save:'💾 റിപ്പോർട്ട് സൂക്ഷിക്കുക',disclaimer:'ഇത് ലക്ഷണങ്ങളെ അടിസ്ഥാനമാക്കിയുള്ള പ്രാഥമിക വിലയിരുത്തലാണ്. ഫോട്ടോ AI വിശകലനം ഇതുവരെ ലഭ്യമല്ല.',footer:'Ujumbo | വിള ആരോഗ്യവും കർഷക സഹായിയും',select:'വിള തിരഞ്ഞെടുക്കുക',photoAdded:'ഫോട്ടോ ചേർത്തു. വിളയും ലക്ഷണങ്ങളും തിരഞ്ഞെടുക്കുക. ഫോട്ടോ വിശകലനം ഇതുവരെ ഇല്ല.',required:'വിളയും ലക്ഷണങ്ങളും നൽകുക.',result:'ഫലം',crop:'വിള',condition:'സാധ്യതയുള്ള പ്രശ്നം',advice:'പരിപാലന നിർദേശം',note:'ശ്രദ്ധിക്കുക',noteText:'ഇത് പ്രാഥമിക വിലയിരുത്തൽ മാത്രമാണ്; ലബോറട്ടറി സ്ഥിരീകരണമല്ല.',noMatch:'പ്രത്യേക പ്രശ്നം കണ്ടെത്തിയില്ല',noMatchAdvice:'ലക്ഷണങ്ങൾ നിലവിലെ വിവരങ്ങളുമായി പൊരുത്തപ്പെടുന്നില്ല. കൂടുതൽ വിവരിച്ച് കൃഷി വിദഗ്ധനെ സമീപിക്കുക.',saved:'റിപ്പോർട്ട് ഈ ഉപകരണത്തിൽ സൂക്ഷിച്ചു.',noResult:'ആദ്യം വിള പരിശോധിക്കുക.',brown:'🟤 തവിട്ട് പാടുകൾ',yellow:'🟡 മഞ്ഞ ഇലകൾ',curl:'🍃 ചുരുണ്ട ഇലകൾ',white:'⚪ വെളുത്ത പൊടി',black:'⚫ കറുത്ത പാടുകൾ',Tomato:'🍅 തക്കാളി',Rice:'🌾 നെല്ല്',Potato:'🥔 ഉരുളക്കിഴങ്ങ്',Chilli:'🌶️ മുളക്',Maize:'🌽 ചോളം'}
+  function selectSymptom(symptom) {
+  document.getElementById("symptoms").value = symptom;
+  }
+  document.getElementById("cropPhoto").addEventListener("change", function () {
+  const file = this.files[0];
+  const preview = document.getElementById("photoPreview");
+  const message = document.getElementById("photoMessage");
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    preview.src = event.target.result;
+    preview.style.display = "block";
+    message.textContent = "📷 Crop photo added. Please select the crop and choose the visible symptom, then tap Analyze Crop.";
+  };
+
+  reader.readAsDataURL(file);
+});
+  const languages = {
+  en: {
+    subtitle: "AI Crop Disease & Farmer Assistant",
+    crop: "Select your crop",
+    symptom: "Choose a symptom:",
+    photo: "Or take a crop photo:",
+    analyze: "Analyze Crop"
+  },
+
+  ta: {
+    subtitle: "AI பயிர் நோய் மற்றும் விவசாயி உதவியாளர்",
+    crop: "உங்கள் பயிரைத் தேர்ந்தெடுக்கவும்",
+    symptom: "அறிகுறியைத் தேர்ந்தெடுக்கவும்:",
+    photo: "அல்லது பயிர் புகைப்படம் எடுக்கவும்:",
+    analyze: "பயிரை ஆய்வு செய்க"
+  },
+
+  hi: {
+    subtitle: "AI फसल रोग और किसान सहायक",
+    crop: "अपनी फसल चुनें",
+    symptom: "लक्षण चुनें:",
+    photo: "या फसल की फोटो लें:",
+    analyze: "फसल का विश्लेषण करें"
+  },
+
+  te: {
+    subtitle: "AI పంట వ్యాధి మరియు రైతు సహాయకుడు",
+    crop: "మీ పంటను ఎంచుకోండి",
+    symptom: "లక్షణాన్ని ఎంచుకోండి:",
+    photo: "లేదా పంట ఫోటో తీయండి:",
+    analyze: "పంటను విశ్లేషించండి"
+  },
+
+  kn: {
+    subtitle: "AI ಬೆಳೆ ರೋಗ ಮತ್ತು ರೈತ ಸಹಾಯಕ",
+    crop: "ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    symptom: "ಲಕ್ಷಣವನ್ನು ಆಯ್ಕೆಮಾಡಿ:",
+    photo: "ಅಥವಾ ಬೆಳೆಯ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ:",
+    analyze: "ಬೆಳೆಯನ್ನು ವಿಶ್ಲೇಷಿಸಿ"
+  },
+
+  ml: {
+    subtitle: "AI വിള രോഗവും കർഷക സഹായിയും",
+    crop: "നിങ്ങളുടെ വിള തിരഞ്ഞെടുക്കുക",
+    symptom: "ലക്ഷണം തിരഞ്ഞെടുക്കുക:",
+    photo: "അല്ലെങ്കിൽ വിളയുടെ ഫോട്ടോ എടുക്കുക:",
+    analyze: "വിള വിശകലനം ചെയ്യുക"
+  }
 };
-const cases={
-early:{name:{en:'Possible Tomato Early Blight',ta:'തக்காளியில் ஆரம்ப இலைக் கருகல் இருக்கலாம்',hi:'टमाटर में अर्ली ब्लाइट संभव है',te:'టమాటాలో ఎర్లీ బ్లైట్ ఉండవచ్చు',kn:'ಟೊಮೆಟೊದಲ್ಲಿ ಆರಂಭಿಕ ಅಂಗಮಾರಿ ಇರಬಹುದು',ml:'തക്കാളിയിൽ എർലി ബ്ലൈറ്റ് ഉണ്ടാകാം'},advice:{en:'Check for concentric rings on older leaves. Avoid wetting foliage and seek locally approved management advice.',ta:'பழைய இலைகளில் வட்ட வடிவப் புள்ளிகள் உள்ளதா பாருங்கள். இலைகள் நனைவதைத் தவிர்த்து உள்ளூர் வேளாண் ஆலோசனை பெறவும்.',hi:'पुरानी पत्तियों पर गोल छल्लेदार धब्बे जाँचें। पत्तियों को गीला करने से बचें और स्थानीय कृषि सलाह लें।',te:'పాత ఆకులపై వలయాకార మచ్చలను పరిశీలించండి. ఆకులు తడవకుండా చూసి స్థానిక వ్యవసాయ సలహా పొందండి.',kn:'ಹಳೆಯ ಎಲೆಗಳ ಮೇಲಿನ ವಲಯಾಕಾರದ ಕಲೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಎಲೆ ಒದ್ದೆಯಾಗದಂತೆ ನೋಡಿಕೊಂಡು ಸ್ಥಳೀಯ ಕೃಷಿ ಸಲಹೆ ಪಡೆಯಿರಿ.',ml:'പഴയ ഇലകളിലെ വൃത്താകൃതിയിലുള്ള പാടുകൾ പരിശോധിക്കുക. ഇലകൾ നനയുന്നത് ഒഴിവാക്കി പ്രാദേശിക കൃഷി ഉപദേശം തേടുക.'}},
-curl:{name:{en:'Possible leaf curl problem',ta:'இலைச் சுருட்டல் பிரச்சனை இருக்கலாம்',hi:'पत्ती मुड़ने की समस्या संभव है',te:'ఆకులు ముడుచుకునే సమస్య ఉండవచ్చు',kn:'ಎಲೆ ಸುರುಳಿಯಾಗುವ ಸಮಸ್ಯೆ ಇರಬಹುದು',ml:'ഇല ചുരുളൽ പ്രശ്നം ഉണ്ടാകാം'},advice:{en:'Check for whiteflies, aphids or other insects; curling can have several causes. Seek expert confirmation.',ta:'வெள்ளை ஈ, அசுவினி போன்ற பூச்சிகள் உள்ளனவா பாருங்கள். இலைச் சுருட்டலுக்கு பல காரணங்கள் இருக்கலாம். நிபுணரிடம் உறுதிப்படுத்தவும்.',hi:'सफेद मक्खी और माहू जैसे कीट देखें। पत्ती मुड़ने के कई कारण हो सकते हैं। विशेषज्ञ से पुष्टि कराएँ।',te:'తెల్లదోమలు, పేనుబంక వంటి పురుగులను పరిశీలించండి. ఆకులు ముడుచుకోవడానికి అనేక కారణాలు ఉండవచ్చు.',kn:'ಬಿಳಿನೊಣ ಮತ್ತು ಹೇನುಗಳಿಗಾಗಿ ಪರಿಶೀಲಿಸಿ. ಎಲೆ ಸುರುಳಿಯಾಗಲು ಹಲವು ಕಾರಣಗಳಿರಬಹುದು. ತಜ್ಞರ ಸಲಹೆ ಪಡೆಯಿರಿ.',ml:'വെള്ളീച്ച, മുഞ്ഞ തുടങ്ങിയ കീടങ്ങളുണ്ടോ പരിശോധിക്കുക. ഇല ചുരുളലിന് പല കാരണങ്ങളുണ്ടാകാം.'}},
-spots:{name:{en:'Possible leaf spot disease',ta:'இலைப்புள்ளி நோய் இருக்கலாம்',hi:'पत्ती धब्बा रोग संभव है',te:'ఆకు మచ్చల వ్యాధి ఉండవచ్చు',kn:'ಎಲೆ ಚುಕ್ಕೆ ರೋಗ ಇರಬಹುದು',ml:'ഇലപ്പുള്ളി രോഗം ഉണ്ടാകാം'},advice:{en:'Inspect the pattern of spots, reduce prolonged leaf wetness and consult a local agricultural expert.',ta:'புள்ளிகளின் வடிவத்தை கவனிக்கவும். இலைகள் நீண்ட நேரம் ஈரமாக இருப்பதைத் தவிர்த்து வேளாண் நிபுணரை அணுகவும்.',hi:'धब्बों का आकार जाँचें, पत्तियों पर लंबे समय तक नमी से बचें और कृषि विशेषज्ञ से सलाह लें।',te:'మచ్చల ఆకారాన్ని పరిశీలించండి, ఆకులపై ఎక్కువసేపు తేమ ఉండకుండా చూసి నిపుణుడిని సంప్రదించండి.',kn:'ಕಲೆಗಳ ಆಕಾರ ಗಮನಿಸಿ, ಎಲೆಗಳು ದೀರ್ಘಕಾಲ ಒದ್ದೆಯಾಗದಂತೆ ನೋಡಿಕೊಂಡು ತಜ್ಞರನ್ನು ಸಂಪರ್ಕಿಸಿ.',ml:'പാടുകളുടെ രൂപം പരിശോധിക്കുക. ഇലകളിൽ ദീർഘനേരം ഈർപ്പം നിലനിൽക്കുന്നത് ഒഴിവാക്കി വിദഗ്ധനെ സമീപിക്കുക.'}},
-powder:{name:{en:'Possible powdery mildew',ta:'சாம்பல் நோய் (பவுடரி மில்டியூ) இருக்கலாம்',hi:'चूर्णिल आसिता संभव है',te:'బూడిద తెగులు ఉండవచ్చు',kn:'ಬೂದಿ ರೋಗ ಇರಬಹುದು',ml:'പൗഡറി മിൽഡ്യൂ ഉണ്ടാകാം'},advice:{en:'Check for a powdery coating on leaves, improve airflow and seek crop-specific advice.',ta:'இலைகளில் வெள்ளைத் தூள் படலம் உள்ளதா பாருங்கள். காற்றோட்டத்தை மேம்படுத்தி பயிருக்கு ஏற்ற ஆலோசனை பெறவும்.',hi:'पत्तियों पर सफेद चूर्ण देखें, हवा का प्रवाह बढ़ाएँ और फसल-विशेष सलाह लें।',te:'ఆకులపై తెల్లటి పొడి ఉందో చూడండి. గాలి ప్రసరణ మెరుగుపరచి పంటకు తగిన సలహా పొందండి.',kn:'ಎಲೆಗಳ ಮೇಲೆ ಬಿಳಿ ಪುಡಿ ಇದೆಯೇ ನೋಡಿ. ಗಾಳಿಯ ಹರಿವು ಸುಧಾರಿಸಿ ಬೆಳೆ-ನಿರ್ದಿಷ್ಟ ಸಲಹೆ ಪಡೆಯಿರಿ.',ml:'ഇലകളിൽ വെളുത്ത പൊടി ഉണ്ടോ പരിശോധിക്കുക. വായുസഞ്ചാരം മെച്ചപ്പെടുത്തി വിളയ്ക്കനുസരിച്ചുള്ള ഉപദേശം തേടുക.'}},
-yellow:{name:{en:'Possible yellowing / nutrient or water stress',ta:'ஊட்டச்சத்து அல்லது நீர் பாதிப்பால் இலை மஞ்சளாகியிருக்கலாம்',hi:'पोषक तत्व या पानी के तनाव से पत्तियाँ पीली हो सकती हैं',te:'పోషకాలు లేదా నీటి ఒత్తిడి వల్ల ఆకులు పసుపుగా మారవచ్చు',kn:'ಪೋಷಕಾಂಶ ಅಥವಾ ನೀರಿನ ಒತ್ತಡದಿಂದ ಎಲೆ ಹಳದಿಯಾಗಿರಬಹುದು',ml:'പോഷകക്കുറവോ ജലസമ്മർദ്ദമോ മൂലം ഇല മഞ്ഞയായിരിക്കാം'},advice:{en:'Check soil moisture, drainage, nutrient status and insects; yellow leaves alone cannot confirm a disease.',ta:'மண் ஈரம், வடிகால், ஊட்டச்சத்து, பூச்சிகள் ஆகியவற்றைப் பாருங்கள். மஞ்சள் இலை மட்டும் நோயை உறுதி செய்யாது.',hi:'मिट्टी की नमी, जल निकासी, पोषण और कीट जाँचें। केवल पीली पत्तियों से रोग की पुष्टि नहीं होती।',te:'నేల తేమ, నీటి పారుదల, పోషకాలు, పురుగులను పరిశీలించండి. పసుపు ఆకులతో మాత్రమే వ్యాధి నిర్ధారణ కాదు.',kn:'ಮಣ್ಣಿನ ತೇವಾಂಶ, ನೀರು ಹರಿವು, ಪೋಷಕಾಂಶ ಮತ್ತು ಕೀಟಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಹಳದಿ ಎಲೆಗಳಿಂದ ಮಾತ್ರ ರೋಗ ಖಚಿತವಾಗುವುದಿಲ್ಲ.',ml:'മണ്ണിലെ ഈർപ്പം, നീർവാർച്ച, പോഷകങ്ങൾ, കീടങ്ങൾ എന്നിവ പരിശോധിക്കുക. മഞ്ഞ ഇലകൾ മാത്രം രോഗം സ്ഥിരീകരിക്കില്ല.'}}
-};
-const symptomCodes={brown:'brown spots on leaves',yellow:'yellow leaves',curl:'curled leaves',white:'white powder on leaves',black:'black spots on leaves'};
-const cropNames=['Tomato','Rice','Potato','Chilli','Maize'];
-let currentCase=null;
-function language(){return document.getElementById('language').value}
-function tr(k){return translations[language()][k]||translations.en[k]||k}
-function setLanguage(){const lang=language();document.documentElement.lang=lang;localStorage.setItem('ujumbo-language',lang);document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));document.querySelectorAll('[data-placeholder]').forEach(el=>el.placeholder=tr(el.dataset.placeholder));const crop=document.getElementById('crop');const selected=crop.value;crop.replaceChildren();[['',tr('select')],...cropNames.map(n=>[n,tr(n)])].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;crop.append(option)});crop.value=selected;const buttons=document.getElementById('symptomButtons');buttons.replaceChildren();Object.keys(symptomCodes).forEach(k=>{const b=document.createElement('button');b.type='button';b.textContent=tr(k);b.onclick=()=>{document.getElementById('symptoms').value=symptomCodes[k];document.getElementById('symptoms').dataset.symptom=k};buttons.append(b)});if(document.getElementById('photoPreview').style.display==='block')document.getElementById('photoMessage').textContent=tr('photoAdded');if(currentCase)renderResult()}
-function pickCase(crop,symptoms){const s=symptoms.toLowerCase();if(crop==='Tomato'&&/brown|dark/.test(s)&&/spot/.test(s))return 'early';if(/curl|curled|curling/.test(s))return 'curl';if(/white/.test(s)&&/powder|coating/.test(s))return 'powder';if(/brown|black|dark/.test(s)&&/spot/.test(s))return 'spots';if(/yellow/.test(s))return 'yellow';return null}
-function renderResult(){const box=document.getElementById('result');box.style.display='block';box.replaceChildren();const add=(tag,txt)=>{const el=document.createElement(tag);el.textContent=txt;box.append(el)};if(currentCase.error){add('strong',tr('required'));return}const c=cases[currentCase.key];add('h3','🌿 '+tr('result'));add('p',tr('crop')+': '+tr(currentCase.crop));add('p',tr('condition')+': '+(c?c.name[language()]:tr('noMatch')));add('p',tr('advice')+': '+(c?c.advice[language()]:tr('noMatchAdvice')));add('p','⚠️ '+tr('note')+': '+tr('noteText'))}
-function analyze(){const crop=document.getElementById('crop').value;const symptoms=document.getElementById('symptoms').value.trim();currentCase=(!crop||!symptoms)?{error:true}:{crop,key:pickCase(crop,symptoms)};renderResult()}
-document.getElementById('language').addEventListener('change',setLanguage);document.getElementById('analyze').addEventListener('click',analyze);document.getElementById('symptoms').addEventListener('input',()=>{delete document.getElementById('symptoms').dataset.symptom});document.getElementById('cropPhoto').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const img=document.getElementById('photoPreview');if(img.dataset.url)URL.revokeObjectURL(img.dataset.url);const url=URL.createObjectURL(f);img.src=url;img.dataset.url=url;img.style.display='block';document.getElementById('photoMessage').textContent=tr('photoAdded')});document.getElementById('speak').addEventListener('click',()=>{if(!currentCase||currentCase.error){alert(tr('noResult'));return}if(!('speechSynthesis' in window)){alert('Speech synthesis not supported on this device');return}speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(document.getElementById('result').innerText);utterance.lang=({en:'en-IN',ta:'ta-IN',hi:'hi-IN',te:'te-IN',kn:'kn-IN',ml:'ml-IN'})[language()];speechSynthesis.speak(utterance)});document.getElementById('save').addEventListener('click',()=>{if(!currentCase||currentCase.error){alert(tr('noResult'));return}try{const reports=JSON.parse(localStorage.getItem('ujumbo-reports')||'[]');reports.push({date:new Date().toISOString(),crop:currentCase.crop,symptoms:document.getElementById('symptoms').value,caseKey:currentCase.key});localStorage.setItem('ujumbo-reports',JSON.stringify(reports));alert(tr('saved'))}catch(e){alert('Storage unavailable')}});document.getElementById('language').value=localStorage.getItem('ujumbo-language')
+
+function changeLanguage() {
+  const language = document.getElementById("language").value;
+  const text = languages[language] || languages.en;
+
+  document.querySelector("h1").textContent = "🌱 Ujumbo";
+  document.querySelector("h1").nextElementSibling.textContent = text.subtitle;
+
+  document.querySelector("#crop").options[0].textContent = text.crop;
+
+  const analyzeButton = document.querySelector(
+    'button[onclick="analyzeCrop()"]'
+  );
+
+  if (analyzeButton) {
+    analyzeButton.textContent = text.analyze;
+  }
+}
+  function translateResult(resultText) {
+  const language = document.getElementById("language").value;
+
+  const translations = {
+    ta: {
+      "Possible Tomato Early Blight": "தக்காளி ஆரம்ப இலை கருகல் நோய் இருக்கலாம்",
+      "Possible Tomato Leaf Curl Problem": "தக்காளி இலை சுருட்டல் பிரச்சனை இருக்கலாம்",
+      "Possible Rice Brown Spot": "நெல் பழுப்பு புள்ளி நோய் இருக்கலாம்",
+      "Possible Potato Blight": "உருளைக்கிழங்கு கருகல் நோய் இருக்கலாம்",
+      "Possible Chilli Leaf Curl Problem": "மிளகாய் இலை சுருட்டல் பிரச்சனை இருக்கலாம்",
+      "Possible Maize Leaf Spot": "மக்காச்சோளம் இலை புள்ளி நோய் இருக்கலாம்"
+    },
+
+    hi: {
+      "Possible Tomato Early Blight": "टमाटर में अर्ली ब्लाइट हो सकता है",
+      "Possible Tomato Leaf Curl Problem": "टमाटर में पत्ती मुड़ने की समस्या हो सकती है",
+      "Possible Rice Brown Spot": "धान में ब्राउन स्पॉट रोग हो सकता है",
+      "Possible Potato Blight": "आलू में झुलसा रोग हो सकता है",
+      "Possible Chilli Leaf Curl Problem": "मिर्च में पत्ती मुड़ने की समस्या हो सकती है",
+      "Possible Maize Leaf Spot": "मक्का में पत्ती धब्बा रोग हो सकता है"
+    }
+  };
+
+  return translations[language]?.[resultText] || resultText;
+  }
+function analyzeCrop() {
+
+  const crop = document.getElementById("crop").value.toLowerCase().trim();
+  const symptoms = document.getElementById("symptoms").value.toLowerCase().trim();
+  const result = document.getElementById("result");
+
+  if (crop === "" || symptoms === "") {
+    result.style.display = "block";
+    result.innerHTML =
+      "<strong>⚠️ Please enter both the crop name and symptoms.</strong>";
+    return;
+  }
+
+  let disease = "Possible crop health problem";
+  let advice =
+    "Monitor the crop carefully, remove severely damaged plant parts, maintain proper irrigation and consult a local agricultural expert for confirmation.";
+
+  let matched = false;
+
+  /* =========================
+     TOMATO
+  ========================= */
+
+  if (crop.includes("tomato")) {
+
+    if (
+      (symptoms.includes("brown") || symptoms.includes("dark")) &&
+      (symptoms.includes("spot") || symptoms.includes("spots")) &&
+      (symptoms.includes("leaf") || symptoms.includes("leaves"))
+    ) {
+      disease = "Possible Tomato Early Blight";
+      advice =
+        "Remove badly affected leaves, avoid watering the leaves from above, improve air circulation and follow locally recommended disease-management practices.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("curl") ||
+      symptoms.includes("curled") ||
+      symptoms.includes("curling")
+    ) {
+      disease = "Possible Tomato Leaf Curl Problem";
+      advice =
+        "Check the underside of leaves for insects, remove severely affected leaves and monitor the plants regularly. Use locally recommended pest-management practices if insects are present.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("white") &&
+      (symptoms.includes("powder") || symptoms.includes("coating"))
+    ) {
+      disease = "Possible Tomato Powdery Mildew";
+      advice =
+        "Improve air circulation, avoid excessive humidity around the leaves and remove severely affected plant material.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("yellow") &&
+      (symptoms.includes("leaf") || symptoms.includes("leaves"))
+    ) {
+      disease = "Possible Tomato Yellowing / Nutrient Stress";
+      advice =
+        "Check watering, drainage and plant nutrition. Look for insects and inspect whether yellowing starts on older or newer leaves.";
+      matched = true;
+    }
+  }
+
+
+  /* =========================
+     RICE
+  ========================= */
+
+  else if (crop.includes("rice")) {
+
+    if (
+      (symptoms.includes("brown") || symptoms.includes("dark")) &&
+      (symptoms.includes("spot") || symptoms.includes("spots"))
+    ) {
+      disease = "Possible Rice Brown Spot";
+      advice =
+        "Use healthy seed, maintain balanced plant nutrition and good field management. Follow locally recommended disease-control practices.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("diamond") ||
+      symptoms.includes("gray") ||
+      symptoms.includes("grey") ||
+      symptoms.includes("lesion")
+    ) {
+      disease = "Possible Rice Blast";
+      advice =
+        "Inspect nearby plants for similar lesions, avoid excessive nitrogen application and follow locally recommended rice-blast management practices.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("yellow") &&
+      (symptoms.includes("leaf") || symptoms.includes("leaves"))
+    ) {
+      disease = "Possible Rice Nutrient Stress";
+      advice =
+        "Check water management and plant nutrition. Compare affected and healthy plants and seek local agricultural advice if yellowing spreads.";
+      matched = true;
+    }
+  }
+
+
+  /* =========================
+     POTATO
+  ========================= */
+
+  else if (crop.includes("potato")) {
+
+    if (
+      (symptoms.includes("brown") || symptoms.includes("dark")) &&
+      (symptoms.includes("spot") || symptoms.includes("spots"))
+    ) {
+      disease = "Possible Potato Blight";
+      advice =
+        "Remove severely affected foliage, reduce prolonged leaf wetness and follow locally recommended disease-management practices.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("yellow") &&
+      (symptoms.includes("leaf") || symptoms.includes("leaves"))
+    ) {
+      disease = "Possible Potato Plant Stress";
+      advice =
+        "Check soil moisture, drainage and plant nutrition. Inspect the plants for insects or disease symptoms.";
+      matched = true;
+    }
+  }
+
+
+  /* =========================
+     CHILLI / PEPPER
+  ========================= */
+
+  else if (
+    crop.includes("chilli") ||
+    crop.includes("chili") ||
+    crop.includes("pepper")
+  ) {
+
+    if (
+      symptoms.includes("curl") ||
+      symptoms.includes("curled") ||
+      symptoms.includes("curling")
+    ) {
+      disease = "Possible Chilli Leaf Curl Problem";
+      advice =
+        "Inspect the leaves for small insects, remove severely affected leaves and monitor new growth. Follow locally recommended pest-management practices.";
+      matched = true;
+    }
+
+    else if (
+      (symptoms.includes("brown") || symptoms.includes("black")) &&
+      (symptoms.includes("spot") || symptoms.includes("spots"))
+    ) {
+      disease = "Possible Chilli Leaf Spot";
+      advice =
+        "Remove severely affected leaves, avoid overhead watering and maintain good air circulation around the plants.";
+      matched = true;
+    }
+  }
+
+
+  /* =========================
+     MAIZE / CORN
+  ========================= */
+
+  else if (
+    crop.includes("maize") ||
+    crop.includes("corn")
+  ) {
+
+    if (
+      (symptoms.includes("brown") || symptoms.includes("gray") || symptoms.includes("grey")) &&
+      (symptoms.includes("spot") || symptoms.includes("spots"))
+    ) {
+      disease = "Possible Maize Leaf Spot";
+      advice =
+        "Remove heavily affected plant material where practical, maintain good crop management and follow locally recommended disease-control practices.";
+      matched = true;
+    }
+
+    else if (
+      symptoms.includes("yellow") &&
+      (symptoms.includes("leaf") || symptoms.includes("leaves"))
+    ) {
+      disease = "Possible Maize Nutrient Stress";
+      advice =
+        "Check soil fertility, water availability and drainage. Compare affected plants with healthy plants.";
+      matched = true;
+    }
+  }
+
+
+  /* =========================
+     GENERAL RESULT
+  ========================= */
+
+  if (!matched) {
+    disease = "No specific condition matched";
+    advice =
+      "The symptoms do not closely match the conditions currently stored in Ujumbo. Try describing the colour, spots, curling, holes, wilting or other visible symptoms in more detail.";
+  }
+
+  result.style.display = "block";
+
+  result.innerHTML = `
+    <h3>🌿 Result</h3>
+    <p><strong>Crop:</strong> ${crop}</p>
+    <p><strong>Possible condition:</strong> ${disease}</p>
+    <p><strong>Management advice:</strong> ${advice}</p>
+    <p><strong>⚠️ Note:</strong> This is an initial assessment, not a laboratory diagnosis.</p>
+  `;
+  translateFinalResult();
+}
+
+</script>
+  <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => {
+        console.log("Ujumbo offline mode ready");
+      })
+      .catch(error => {
+        console.log("Offline mode error:", error);
+      });
+  });
+}
+  </script>
+  
+<!-- Ujumbo Language Selection -->
+<div style="padding:15px; background:white; margin:15px; border-radius:12px;">
+  <label for="language">Choose Your Language</label>
+  <select id="language" style="width:100%; padding:12px;">
+    <option value="en">English</option>
+    <option value="ta">தமிழ் (Tamil)</option>
+    <option value="hi">हिन्दी (Hindi)</option>
+    <option value="te">తెలుగు (Telugu)</option>
+    <option value="kn">ಕನ್ನಡ (Kannada)</option>
+    <option value="ml">മലയാളം (Malayalam)</option>
+  </select>
+</div>
+
+<button onclick="speakResult()">🔊 Read Result Aloud</button>
+
+<script>
+function speakResult() {
+  let result = document.getElementById("result");
+  let lang = document.getElementById("language").value;
+
+  if (!result) {
+    alert("Please check a crop first.");
+    return;
+  }
+
+  let speech = new SpeechSynthesisUtterance(result.innerText);
+  speech.lang = lang === "ta" ? "ta-IN" :
+                lang === "hi" ? "hi-IN" :
+                lang === "te" ? "te-IN" :
+                lang === "kn" ? "kn-IN" :
+                lang === "ml" ? "ml-IN" : "en-IN";
+
+  speechSynthesis.speak(speech);
+}
+</script>
+
+
+</body>
+</html>
