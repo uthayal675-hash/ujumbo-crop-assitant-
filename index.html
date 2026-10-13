@@ -537,6 +537,43 @@ if ("serviceWorker" in navigator) {
   });
 }
   </script>
+  
+<!-- Ujumbo Language Selection -->
+<div style="padding:15px; background:white; margin:15px; border-radius:12px;">
+  <label for="language">Choose Your Language</label>
+  <select id="language" style="width:100%; padding:12px;">
+    <option value="en">English</option>
+    <option value="ta">தமிழ் (Tamil)</option>
+    <option value="hi">हिन्दी (Hindi)</option>
+    <option value="te">తెలుగు (Telugu)</option>
+    <option value="kn">ಕನ್ನಡ (Kannada)</option>
+    <option value="ml">മലയാളം (Malayalam)</option>
+  </select>
+</div>
+
+<button onclick="speakResult()">🔊 Read Result Aloud</button>
+
+<script>
+function speakResult() {
+  let result = document.getElementById("result");
+  let lang = document.getElementById("language").value;
+
+  if (!result) {
+    alert("Please check a crop first.");
+    return;
+  }
+
+  let speech = new SpeechSynthesisUtterance(result.innerText);
+  speech.lang = lang === "ta" ? "ta-IN" :
+                lang === "hi" ? "hi-IN" :
+                lang === "te" ? "te-IN" :
+                lang === "kn" ? "kn-IN" :
+                lang === "ml" ? "ml-IN" : "en-IN";
+
+  speechSynthesis.speak(speech);
+}
+</script>
+
 
 </body>
 </html>
