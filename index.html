@@ -211,5 +211,64 @@ document.getElementById("language")
   .addEventListener("change", updateSymptomLanguage);
 
 updateSymptomLanguage();
+
+
+<script>
+const symptomInputTranslations = {
+  "Brown spots on leaves": {
+    ta: "இலைகளில் பழுப்பு நிற புள்ளிகள்",
+    hi: "पत्तियों पर भूरे धब्बे",
+    te: "ఆకులపై గోధుమ రంగు మచ్చలు",
+    ml: "ഇലകളിൽ തവിട്ട് പാടുകൾ",
+    kn: "ಎಲೆಗಳ ಮೇಲೆ ಕಂದು ಕಲೆಗಳು"
+  },
+  "Yellow leaves": {
+    ta: "மஞ்சள் நிற இலைகள்",
+    hi: "पीली पत्तियाँ",
+    te: "పసుపు ఆకులు",
+    ml: "മഞ്ഞ ഇലകൾ",
+    kn: "ಹಳದಿ ಎಲೆಗಳು"
+  },
+  "Curled leaves": {
+    ta: "சுருண்ட இலைகள்",
+    hi: "मुड़ी हुई पत्तियाँ",
+    te: "ముడుచుకున్న ఆకులు",
+    ml: "ചുരുണ്ട ഇലകൾ",
+    kn: "ಸುರುಳಿಯಾದ ಎಲೆಗಳು"
+  },
+  "White powder on leaves": {
+    ta: "இலைகளில் வெள்ளை நிறப் பொடி",
+    hi: "पत्तियों पर सफेद चूर्ण",
+    te: "ఆకులపై తెల్లటి పొడి",
+    ml: "ഇലകളിൽ വെളുത്ത പൊടി",
+    kn: "ಎಲೆಗಳ ಮೇಲೆ ಬಿಳಿ ಪುಡಿ"
+  },
+  "Black spots on leaves": {
+    ta: "இலைகளில் கருப்பு நிற புள்ளிகள்",
+    hi: "पत्तियों पर काले धब्बे",
+    te: "ఆకులపై నల్లటి మచ్చలు",
+    ml: "ഇലകളിൽ കറുത്ത പാടുകൾ",
+    kn: "ಎಲೆಗಳ ಮೇಲೆ ಕಪ್ಪು ಕಲೆಗಳು"
+  }
+};
+
+let selectedSymptomKey = "";
+
+window.selectSymptom = function(symptom) {
+  selectedSymptomKey = symptom;
+  const lang = document.getElementById("language").value;
+  const translated = symptomInputTranslations[symptom];
+
+  document.getElementById("symptoms").value =
+    translated?.[lang] || symptom;
+};
+
+document.getElementById("language")
+  .addEventListener("change", function() {
+    if (selectedSymptomKey) {
+      window.selectSymptom(selectedSymptomKey);
+    }
+  });
 </script>
+
 </body></html>
